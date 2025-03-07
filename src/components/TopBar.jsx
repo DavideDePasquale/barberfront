@@ -3,9 +3,10 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { CloudSun, Scissors } from "react-bootstrap-icons";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
 function TopBar() {
+  const navigate = useNavigate();
   return (
     <>
       <Navbar expand="md" className="topbarcol">
@@ -34,8 +35,20 @@ function TopBar() {
               <NavLink to="/contatti" className="nav-link me-2">
                 Contatti & Lic.
               </NavLink>
-              <Button variant="dark" className="px-4">
+
+              <Button
+                variant="dark"
+                className="px-4 ms-3"
+                onClick={() => navigate("/login")}
+              >
                 Accedi
+              </Button>
+              <Button
+                variant="outline-dark"
+                className="px-4 ms-3"
+                onClick={() => navigate("/register")}
+              >
+                Registrati
               </Button>
             </Nav>
           </Navbar.Collapse>

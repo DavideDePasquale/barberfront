@@ -26,7 +26,7 @@ const FirstPage = () => {
       </h1>
       <h5 className="text-center mt-5">
         Vuoi prenotare un trattamento? Clicca qui! <ArrowRight />{" "}
-        <Link to="/prenota">
+        <Link to="/appuntamento">
           <Scissors
             className="me-3"
             style={{ fontSize: "40px", color: "black" }}
