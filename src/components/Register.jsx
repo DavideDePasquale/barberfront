@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Form, Button, Container, Alert } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 function Registrazione() {
   const [formData, setFormData] = useState({
@@ -78,6 +79,9 @@ function Registrazione() {
 
   return (
     <Container>
+      <h6>
+        Sei già registrato? <Link to="/login"> Clicca qui </Link>
+      </h6>
       <h2>Registrazione</h2>
 
       {error && <Alert variant="danger">{error}</Alert>}

@@ -1,20 +1,29 @@
 import React, { useState } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Form,
+  Button,
+  Alert
+} from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); // Reset error
+    setError(null);
 
     try {
       const response = await fetch("http://localhost:8080/auth/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password })
       });
 
@@ -22,66 +31,69 @@ const LoginPage = () => {
         throw new Error("Credenziali errate! Riprova.");
       }
 
-      const text = await response.text(); // Leggi la risposta come testo
-
+      const text = await response.text();
       let token;
       try {
-        const data = JSON.parse(text); // Prova a convertire in JSON
+        const data = JSON.parse(text);
         token = data.token;
-      } catch (err) {
-        console.error("Errore nel parsing del JSON ", err);
-        token = text; // Se fallisce, significa che è una stringa semplice
+      } catch (error) {
+        console.error("ERROR :" + error);
+        token = text;
       }
 
       localStorage.setItem("token", token);
-      console.log("Login riuscito! Token salvato:", token);
-
-      // Reindirizza alla home o alla dashboard
-      window.location.href = "/dashboard";
-    } catch (err) {
-      setError(err.message);
+      navigate("/prenota");
+    } catch (error) {
+      setError(error.message);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-        <h2 className="text-2xl font-semibold text-center mb-4">Login</h2>
-
-        {error && <p className="text-red-500 text-center">{error}</p>}
-
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block font-medium">Username</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2 border rounded"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block font-medium">Password</label>
-            <input
-              type="password"
-              className="w-full px-3 py-2 border rounded"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded"
-          >
-            Accedi
-          </button>
-        </form>
-      </div>
-    </div>
+    <Container
+      fluid
+      className="d-flex align-items-center justify-content-center"
+      style={{
+        minHeight: "100vh",
+        background:
+          "linear-gradient(to right,rgb(18 18 18 / 0%),rgb(195 195 195 / 23%))"
+      }}
+    >
+      <Row className="w-100">
+        <Col xs={12} md={{ span: 4, offset: 4 }}>
+          <Card className="shadow">
+            <Card.Body>
+              <Card.Title className="text-center mb-4">Login</Card.Title>
+              {error && <Alert variant="danger">{error}</Alert>}
+              <Form onSubmit={handleSubmit}>
+                <Form.Group className="mb-3" controlId="formUsername">
+                  <Form.Label>Username</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Inserisci username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                  />
+                </Form.Group>
+                <Form.Group className="mb-4" controlId="formPassword">
+                  <Form.Label>Password</Form.Label>
+                  <Form.Control
+                    type="password"
+                    placeholder="Inserisci password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </Form.Group>
+                <Button variant="primary" type="submit" className="w-100">
+                  Accedi
+                </Button>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
