@@ -9,6 +9,8 @@ import Dashboard from "./components/Dashboard";
 import Prenotazione from "./components/Prenotazione";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+import BarberAppointments from "./components/BarberAppointments";
+
 function App() {
   return (
     <BrowserRouter>
@@ -22,6 +24,11 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/prenota" element={<Prenotazione />} />
+          <Route
+            path="/appuntamento/barber/appuntamenti"
+            element={<BarberAppointments />}
+          />{" "}
+          {/* Aggiungi la rotta per il barbiere */}
         </Route>
 
         <Route path="*" element={<h1>Pagina non trovata</h1>} />

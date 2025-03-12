@@ -1,0 +1,60 @@
+/* Paginazione */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.page-item {
+  margin: 0 5px;
+}
+
+.page-link {
+  padding: 10px 15px;
+  text-decoration: none;
+  border-radius: 5px;
+  color: #282e28;
+  font-size: 1rem;
+}
+
+.page-link:hover {
+  background-color: #171b17;
+  color: white;
+}
+
+.page-item.active .page-link {
+  background-color: #2c2f2c;
+  color: white;
+}
+
+.page-item.disabled .page-link {
+  color: #ccc;
+}
+.container {
+  max-width: 40%; /* O qualsiasi valore che desideri, ad esempio 80% o 100% */
+  margin: 0 auto; /* Centra il contenitore */
+}
+/* BarberAppointments.css */
+.table {
+  width: 100%; /* Assicurati che la tabella occupi tutta la larghezza disponibile */
+}
+
+.table th,
+.table td {
+  text-align: center; /* Allinea il testo al centro */
+  padding: 10px; /* Aggiungi un po' di spazio interno */
+}
+
+.table thead {
+  background-color: #f8f9fa; /* Colore di sfondo per l'intestazione */
+}
+
+.table tr {
+  display: flex;
+  justify-content: space-between; /* Distribuisci uniformemente le colonne */
+}
+
+.table th,
+.table td {
+  flex: 1; /* Ogni colonna occupa la stessa larghezza */
+}

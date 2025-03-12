@@ -42,7 +42,7 @@ const LoginPage = () => {
       }
 
       localStorage.setItem("token", token);
-      navigate("/prenota");
+      navigate("/prenota/");
     } catch (error) {
       setError(error.message);
     }
