@@ -41,11 +41,45 @@ const LoginPage = () => {
         token = text;
       }
 
+      // Estrai il ruolo senza jwt_decode
+      const decodedToken = parseJwt(token);
+      const tipo_ruolo = decodedToken?.roles ? decodedToken.roles[0] : null;
+
+      // Salva il token nel localStorage
       localStorage.setItem("token", token);
-      navigate("/prenota/");
+
+      // Salva il ruolo nel localStorage (utile per altre funzionalità)
+      if (tipo_ruolo) {
+        localStorage.setItem("tipo_ruolo", tipo_ruolo);
+      }
+
+      // Naviga alla pagina giusta in base al ruolo
+      if (tipo_ruolo === "USER") {
+        navigate("/prenota/"); // Naviga alla pagina di prenotazione per l'utente
+      } else if (tipo_ruolo === "BARBER") {
+        navigate("/appuntamento/barber/appuntamenti"); // Naviga alla pagina degli appuntamenti del barbiere
+      } else {
+        navigate("/"); // Naviga alla home page per altri ruoli o errori
+      }
     } catch (error) {
-      setError(error.message);
+      setError(error.message); // Mostra un messaggio di errore in caso di fallimento
     }
+  };
+
+  // Funzione per decodificare il token JWT
+  const parseJwt = (token) => {
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join("")
+    );
+
+    return JSON.parse(jsonPayload);
   };
 
   return (

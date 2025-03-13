@@ -5,11 +5,12 @@ import TopBar from "./components/TopBar";
 import FirstPage from "./components/FirstPage";
 import Registrazione from "./components/Register";
 import LoginPage from "./components/LoginPage";
-import Dashboard from "./components/Dashboard";
 import Prenotazione from "./components/Prenotazione";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import BarberAppointments from "./components/BarberAppointments";
+import ModificaUtente from "./components/ModificaUtente";
+import AppuntamentiPage from "./components/AppuntamentiPage";
 
 function App() {
   return (
@@ -22,14 +23,15 @@ function App() {
 
         {/* Rotte protette */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/prenota" element={<Prenotazione />} />
+          <Route path="/prenota/" element={<Prenotazione />} />
           <Route
             path="/appuntamento/barber/appuntamenti"
             element={<BarberAppointments />}
           />{" "}
           {/* Aggiungi la rotta per il barbiere */}
         </Route>
+        <Route path="/modifica-utente" element={<ModificaUtente />} />
+        <Route path="/appuntamenti" element={<AppuntamentiPage />} />
 
         <Route path="*" element={<h1>Pagina non trovata</h1>} />
       </Routes>
