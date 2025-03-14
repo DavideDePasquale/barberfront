@@ -36,13 +36,28 @@ const Prenotazione = () => {
 
   const getUserIdFromToken = (token) => {
     try {
-      const payloadBase64 = token.split(".")[1]; // Ottieni la parte centrale del token
-      const payloadJson = atob(payloadBase64); // Decodifica la base64
-      const userData = JSON.parse(payloadJson); // Converte in JSON
-      return userData.sub; // Estrai l'ID utente (o la proprietà che contiene l'ID)
+      if (!token) {
+        console.error("Token non trovato!");
+        return null;
+      }
+
+      const payloadBase64 = token.split(".")[1];
+      const payloadJson = atob(payloadBase64);
+      const userData = JSON.parse(payloadJson);
+
+      console.log("Payload del token:", userData);
+
+      const userId = userData.utenteId || userData.sub;
+
+      if (!userId) {
+        console.error("ID utente non trovato nel token.");
+        return null;
+      }
+
+      return userId;
     } catch (error) {
       console.error("Errore nella decodifica del token:", error);
-      return null; // In caso di errore, ritorna null
+      return null;
     }
   };
 
@@ -73,7 +88,10 @@ const Prenotazione = () => {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token non trovato");
 
-      const formattedDate = date.toISOString().split("T")[0];
+      const formattedDate = date.toLocaleDateString("en-CA", {
+        timeZone: "Europe/Rome"
+      });
+
       console.log("Data selezionata:", formattedDate);
 
       const response = await fetch(
@@ -90,7 +108,20 @@ const Prenotazione = () => {
       if (!response.ok) throw new Error("Errore nella risposta del server");
 
       const data = await response.json();
-      setOrariDisponibili(data);
+
+      // Se la data selezionata è oggi, disabilita gli orari passati
+      const today = new Date();
+      if (date.toLocaleDateString() === today.toLocaleDateString()) {
+        const currentHour = today.getHours();
+        setOrariDisponibili(
+          data.filter((orario) => {
+            const hour = parseInt(orario.split(":")[0], 10); // Estrai l'ora
+            return hour >= currentHour; // Mantieni solo gli orari futuri
+          })
+        );
+      } else {
+        setOrariDisponibili(data); // Usa tutti gli orari se non è oggi
+      }
     } catch (error) {
       console.error("Errore nel recupero degli orari disponibili", error);
       setOrariDisponibili([]); // Reset in caso di errore
@@ -98,8 +129,22 @@ const Prenotazione = () => {
   };
 
   const handleDateChange = (date) => {
-    setSelectedDate(date);
-    fetchOrariDisponibili(date);
+    const normalizedDate = new Date(date);
+    normalizedDate.setHours(0, 0, 0, 0); // Imposta a mezzanotte
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Imposta la data di oggi a mezzanotte
+
+    // Non permettere la selezione di date nel passato
+    if (normalizedDate < today) {
+      alert("Non puoi selezionare una data nel passato!");
+      return;
+    }
+
+    console.log("Data selezionata (normalizzata):", normalizedDate);
+
+    setSelectedDate(normalizedDate);
+    fetchOrariDisponibili(normalizedDate);
   };
 
   const handlePrenotazione = async () => {
@@ -112,15 +157,16 @@ const Prenotazione = () => {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token non trovato");
 
-      const formattedDate = selectedDate.toISOString().split("T")[0];
-      const userId = getUserIdFromToken(token); // Ottieni l'ID utente dal token
+      const formattedDate = selectedDate.toLocaleDateString("en-CA", {
+        timeZone: "Europe/Rome"
+      });
+      const userId = getUserIdFromToken(token);
 
       if (!userId) {
         alert("Impossibile estrarre l'ID utente dal token.");
         return;
       }
 
-      // Chiamata per creare una nuova prenotazione
       const response = await fetch(
         "http://localhost:8080/appuntamento/nuovoappuntamento",
         {
@@ -132,19 +178,34 @@ const Prenotazione = () => {
           body: JSON.stringify({
             data: formattedDate,
             oraappuntamento: selectedOrario,
-            id_trattamento: selectedTrattamento, // ID trattamento
-            id_utente: userId // ID utente
+            id_trattamento: Number(selectedTrattamento),
+            id_utente: userId
           })
         }
       );
 
+      const rawResponse = await response.text();
+      let responseData = {};
+      if (rawResponse) {
+        responseData = JSON.parse(rawResponse);
+      } else {
+        console.error("La risposta del server è vuota.");
+      }
+
       if (!response.ok) throw new Error("Errore durante la prenotazione");
 
-      const result = await response.json();
-      setPrenotazioneConfermata(result);
+      console.log("Risposta del server:", responseData);
+      setPrenotazioneConfermata(responseData);
     } catch (error) {
       console.error("Errore durante la prenotazione:", error);
     }
+  };
+
+  // Funzione per disabilitare domenica (0) e lunedì (1)
+  const tileDisabled = ({ date }) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Imposta la data odierna a mezzanotte
+    return date < today; // Disabilita le date precedenti ad oggi
   };
 
   return (
@@ -155,7 +216,11 @@ const Prenotazione = () => {
       <h3>Prenota il tuo appuntamento</h3>
 
       <div className="calendar-container">
-        <Calendar onChange={handleDateChange} value={selectedDate} />
+        <Calendar
+          onChange={handleDateChange}
+          value={selectedDate}
+          tileDisabled={tileDisabled} // Aggiungi la logica per disabilitare domenica e lunedì
+        />
       </div>
 
       <h3>Seleziona il trattamento:</h3>
@@ -185,21 +250,17 @@ const Prenotazione = () => {
           ))}
         </select>
       ) : (
-        <p>Nessun orario disponibile per questa data.</p>
+        <p>Nessun orario disponibile per questa data e trattamento.</p>
       )}
 
-      <button
-        onClick={handlePrenotazione}
-        disabled={!selectedOrario || !selectedTrattamento}
-      >
-        Conferma Prenotazione
-      </button>
+      <button onClick={handlePrenotazione}>Conferma prenotazione</button>
 
       {prenotazioneConfermata && (
         <div className="success-message">
+          <h3>Prenotazione confermata!</h3>
           <p>
-            Prenotazione confermata per il {prenotazioneConfermata.data} alle{" "}
-            {prenotazioneConfermata.oraappuntamento}
+            Prenotazione per il giorno {prenotazioneConfermata.data} avvenuta
+            con successo ☑️
           </p>
         </div>
       )}

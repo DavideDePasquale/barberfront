@@ -1,0 +1,100 @@
+.appointments-page {
+  background-color: #f8f9fa; /* Colore di sfondo chiaro */
+  padding: 30px 0;
+}
+
+.appointments-page h1 {
+  color: #212223dc; /* Colore del testo del titolo */
+  font-size: 2.75rem;
+  font-weight: 600;
+}
+
+.appointments-page .card {
+  border: none;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.appointments-page .card-body {
+  padding: 20px;
+}
+
+.appointments-page .card-title {
+  font-size: 1.1rem;
+  color: #212c38;
+}
+
+.appointments-page .card-text {
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+.appointments-page .btn {
+  font-size: 1.1rem;
+  padding: 10px 20px;
+  margin: 0 10px;
+}
+
+.appointments-page .btn-outline-primary {
+  border-color: #4b4d4e;
+  color: #343535;
+}
+
+.appointments-page .btn-primary {
+  background-color: #949699;
+  border-color: #020202;
+}
+
+.appointments-page .pagination {
+  margin-top: 30px;
+}
+
+.appointments-page .pagination .page-item {
+  margin: 0 5px;
+}
+
+.appointments-page .pagination .page-link {
+  border-radius: 45%;
+  background-color: #6a6c6e;
+  color: rgb(239, 233, 233);
+}
+
+.appointments-page .pagination .page-link:hover {
+  background-color: #1b1a1a;
+  color: white;
+}
+
+.appointments-page .btn:hover {
+  background-color: #0056b3;
+  color: white;
+}
+
+.appointments-page .d-flex {
+  justify-content: center;
+}
+
+/* Stile per i cerchi di paginazione */
+.pagination-circle {
+  width: 40px; /* larghezza del cerchio */
+  height: 40px; /* altezza del cerchio */
+  border-radius: 50%; /* rende l'elemento un cerchio */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  background-color: #dcdcdc; /* colore grigio */
+  color: #fef8f8; /* colore del testo */
+  border: none; /* nessun bordo */
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.pagination-circle:hover {
+  background-color: #a9a9a9; /* colore grigio scuro al passaggio del mouse */
+}
+
+.pagination-circle:disabled {
+  background-color: #f0f0f0; /* colore di sfondo per il bottone disabilitato */
+  cursor: not-allowed;
+}

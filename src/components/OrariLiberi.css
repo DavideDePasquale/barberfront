@@ -1,0 +1,83 @@
+.orari-liberi-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+  font-family: "Arial", sans-serif;
+}
+
+.title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Contenitore per il calendario */
+.calendar-container {
+  margin-bottom: 20px;
+}
+
+.calendar {
+  width: 80%;
+  margin: 0 auto;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.calendar:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+/* Spinner di caricamento */
+.loading-container {
+  margin-top: 20px;
+}
+
+/* Messaggi di errore */
+.error-message {
+  margin-top: 20px;
+}
+
+/* Card con orari disponibili */
+.orari-card {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.orari-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.orario-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  font-size: 16px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.orario-btn:hover {
+  background-color: #0056b3;
+  cursor: pointer;
+}
+
+.orario-btn:focus {
+  outline: none;
+}
+
+/* Messaggio quando non ci sono orari disponibili */
+.no-orari-message {
+  margin-top: 20px;
+}

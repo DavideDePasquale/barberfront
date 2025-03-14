@@ -83,9 +83,8 @@ const BarberAppointments = () => {
     const currentDate = new Date().toISOString().split("T")[0]; // Ottieni la data corrente in formato YYYY-MM-DD
     const currentDateIndex = dates.indexOf(currentDate);
 
-    // Se appointmentDates è vuota o se il giorno corrente non è presente, imposta il primo giorno disponibile
-    const defaultPageIndex =
-      dates.length > 0 && currentDateIndex !== -1 ? currentDateIndex : 0;
+    // Se il giorno corrente è presente, selezioniamolo come pagina predefinita
+    const defaultPageIndex = currentDateIndex !== -1 ? currentDateIndex : 0;
 
     // Imposta la pagina iniziale su defaultPageIndex
     setCurrentPage(defaultPageIndex);
@@ -95,7 +94,7 @@ const BarberAppointments = () => {
 
   if (error) return <p>{error}</p>;
 
-  // Ottieni gli appuntamenti del giorno corrente (dalla data corrente alla data finale)
+  // Ottieni gli appuntamenti per il giorno selezionato
   const currentDayAppointments = appointments.filter((appointment) => {
     const appointmentDate = new Date(appointment.data);
     return (

@@ -59,7 +59,7 @@ function TopBar() {
           <Navbar.Toggle aria-controls="navbarScroll" />
           <Navbar.Collapse id="navbarScroll">
             <Nav className="me-auto my-2 my-lg-0" navbarScroll>
-              <NavLink to="/dashboard" className="nav-link">
+              <NavLink to="" className="nav-link">
                 Home
               </NavLink>
 
@@ -84,10 +84,7 @@ function TopBar() {
                   >
                     Prenotazioni
                   </NavLink>
-                  <NavLink
-                    to="/appuntamento/barber/posti-liberi"
-                    className="nav-link"
-                  >
+                  <NavLink to="/appuntamento/orariliberi" className="nav-link">
                     Posti Liberi
                   </NavLink>
                 </>

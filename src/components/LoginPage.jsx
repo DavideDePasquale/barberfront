@@ -31,17 +31,14 @@ const LoginPage = () => {
         throw new Error("Credenziali errate! Riprova.");
       }
 
-      const text = await response.text();
-      let token;
-      try {
-        const data = JSON.parse(text);
-        token = data.token;
-      } catch (error) {
-        console.error("ERROR :" + error);
-        token = text;
+      // Ottieni la risposta come testo (token JWT)
+      const token = await response.text();
+
+      if (!token) {
+        throw new Error("Token non presente nella risposta.");
       }
 
-      // Estrai il ruolo senza jwt_decode
+      // Decodifica il token JWT
       const decodedToken = parseJwt(token);
       const tipo_ruolo = decodedToken?.roles ? decodedToken.roles[0] : null;
 

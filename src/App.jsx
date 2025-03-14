@@ -11,6 +11,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import BarberAppointments from "./components/BarberAppointments";
 import ModificaUtente from "./components/ModificaUtente";
 import AppuntamentiPage from "./components/AppuntamentiPage";
+import LicensePage from "./components/LicensePage";
+import OrariLiberi from "./components/OrariLiberi";
 
 function App() {
   return (
@@ -20,7 +22,7 @@ function App() {
         <Route path="/" element={<FirstPage />} />
         <Route path="/register" element={<Registrazione />} />
         <Route path="/login" element={<LoginPage />} />
-
+        <Route path="/contatti" element={<LicensePage />} />{" "}
         {/* Rotte protette */}
         <Route element={<ProtectedRoute />}>
           <Route path="/prenota/" element={<Prenotazione />} />
@@ -32,7 +34,7 @@ function App() {
         </Route>
         <Route path="/modifica-utente" element={<ModificaUtente />} />
         <Route path="/appuntamenti" element={<AppuntamentiPage />} />
-
+        <Route path="/appuntamento/orariliberi" element={<OrariLiberi />} />
         <Route path="*" element={<h1>Pagina non trovata</h1>} />
       </Routes>
     </BrowserRouter>
