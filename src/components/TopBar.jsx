@@ -5,15 +5,32 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { Scissors, PersonCircle } from "react-bootstrap-icons"; // PersonCircle = Omino
-import { Dropdown, Modal } from "react-bootstrap"; // Importa Modal
-import ModificaUtente from "./ModificaUtente"; // Importa il componente per la modifica utente
+import { Dropdown } from "react-bootstrap"; // Rimosso Modal
 
 function TopBar() {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [avatar, setAvatar] = useState(null);
   const [role, setRole] = useState(null);
-  const [showModal, setShowModal] = useState(false); // Stato per il modale
+
+  // Funzione per estrarre l'ID dell'utente dal token
+  const getUserIdFromToken = (token) => {
+    if (!token) {
+      console.error("Token non trovato!");
+      return null;
+    }
+
+    try {
+      const payload = token.split(".")[1]; // Prende la parte del payload del token
+      const decoded = atob(payload); // Decodifica il base64
+      const json = JSON.parse(decoded); // Converte in JSON
+      console.log("Decoded Token:", json); // Aggiungi un log per vedere la struttura
+      return json.utenteId; // Restituisce l'ID dell'utente
+    } catch (error) {
+      console.error("Errore nel decodificare il token", error);
+      return null;
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -29,6 +46,10 @@ function TopBar() {
     setIsLoggedIn(true);
     setRole(storedRole);
     setAvatar(storedAvatar);
+
+    // Estrai l'ID dal token
+    const userId = getUserIdFromToken(token);
+    console.log("USER ID: ", userId); // Aggiungi un log per verificare l'ID
   }, [navigate]);
 
   const handleLogout = () => {
@@ -39,14 +60,6 @@ function TopBar() {
     setRole(null);
     navigate("/");
     window.location.reload();
-  };
-
-  const handleEditProfile = () => {
-    setShowModal(true); // Mostra il modale quando si clicca su "Modifica utente"
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false); // Chiudi il modale
   };
 
   return (
@@ -68,8 +81,6 @@ function TopBar() {
                   <NavLink to="/prenota/" className="nav-link">
                     Prenota
                   </NavLink>
-
-                  {/* Modifica il link di "Promemoria" per portarci alla pagina degli appuntamenti */}
                   <NavLink to="/appuntamenti" className="nav-link">
                     Promemoria
                   </NavLink>
@@ -119,7 +130,7 @@ function TopBar() {
                     )}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
-                    <Dropdown.Item onClick={handleEditProfile}>
+                    <Dropdown.Item as={NavLink} to="/modifica-utente">
                       Modifica utente
                     </Dropdown.Item>
                     <Dropdown.Item onClick={handleLogout}>Esci</Dropdown.Item>
@@ -143,15 +154,6 @@ function TopBar() {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-
-      <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Modifica Profilo</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <ModificaUtente closeModal={handleCloseModal} />
-        </Modal.Body>
-      </Modal>
     </>
   );
 }

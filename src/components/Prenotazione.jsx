@@ -205,7 +205,7 @@ const Prenotazione = () => {
   const tileDisabled = ({ date }) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Imposta la data odierna a mezzanotte
-    return date < today; // Disabilita le date precedenti ad oggi
+    return date < today || date.getDay() === 0 || date.getDay() === 1; // Disabilita le date precedenti a oggi e i giorni di chiusura
   };
 
   return (
@@ -231,7 +231,7 @@ const Prenotazione = () => {
         <option value="">Seleziona un trattamento</option>
         {trattamenti.map((trattamento) => (
           <option key={trattamento.id} value={trattamento.id}>
-            {trattamento.tipotrattamento} - {trattamento.durata_minuti} minuti
+            {trattamento.tipotrattamento}
           </option>
         ))}
       </select>

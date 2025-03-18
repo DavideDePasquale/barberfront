@@ -98,3 +98,8 @@
   background-color: #f0f0f0; /* colore di sfondo per il bottone disabilitato */
   cursor: not-allowed;
 }
+
+.small-button {
+  font-size: 0.8rem; /* Riduci la dimensione del testo */
+  padding: 0.5rem 1rem; /* Riduci il padding */
+}
