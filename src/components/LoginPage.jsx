@@ -31,52 +31,29 @@ const LoginPage = () => {
         throw new Error("Credenziali errate! Riprova.");
       }
 
-      // Ottieni la risposta come testo (token JWT)
       const token = await response.text();
+      if (!token) throw new Error("Token non presente nella risposta.");
 
-      if (!token) {
-        throw new Error("Token non presente nella risposta.");
-      }
-
-      // Decodifica il token JWT
       const decodedToken = parseJwt(token);
       const tipo_ruolo = decodedToken?.roles ? decodedToken.roles[0] : null;
 
-      // Salva il token nel localStorage
       localStorage.setItem("token", token);
+      if (tipo_ruolo) localStorage.setItem("tipo_ruolo", tipo_ruolo);
 
-      // Salva il ruolo nel localStorage (utile per altre funzionalità)
-      if (tipo_ruolo) {
-        localStorage.setItem("tipo_ruolo", tipo_ruolo);
-      }
-
-      // Naviga alla pagina giusta in base al ruolo
-      if (tipo_ruolo === "USER") {
-        navigate("/prenota/"); // Naviga alla pagina di prenotazione per l'utente
-      } else if (tipo_ruolo === "BARBER") {
-        navigate("/appuntamento/barber/appuntamenti"); // Naviga alla pagina degli appuntamenti del barbiere
-      } else {
-        navigate("/"); // Naviga alla home page per altri ruoli o errori
-      }
+      navigate(
+        tipo_ruolo === "USER"
+          ? "/prenota/"
+          : "/appuntamento/barber/appuntamenti"
+      );
     } catch (error) {
-      setError(error.message); // Mostra un messaggio di errore in caso di fallimento
+      setError(error.message);
     }
   };
 
-  // Funzione per decodificare il token JWT
   const parseJwt = (token) => {
     const base64Url = token.split(".")[1];
     const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split("")
-        .map(function (c) {
-          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-        })
-        .join("")
-    );
-
-    return JSON.parse(jsonPayload);
+    return JSON.parse(atob(base64));
   };
 
   return (
@@ -84,39 +61,77 @@ const LoginPage = () => {
       fluid
       className="d-flex align-items-center justify-content-center"
       style={{
-        minHeight: "100vh",
-        background:
-          "linear-gradient(to right,rgb(18 18 18 / 0%),rgb(195 195 195 / 23%))"
+        minHeight: "85vh"
       }}
     >
       <Row className="w-100">
         <Col xs={12} md={{ span: 4, offset: 4 }}>
-          <Card className="shadow">
+          <Card
+            className="shadow-lg border-0 p-4"
+            style={{
+              borderRadius: "60px",
+              backgroundColor: "rgb(216 219 222)"
+            }}
+          >
             <Card.Body>
-              <Card.Title className="text-center mb-4">Login</Card.Title>
+              <Card.Title
+                className="text-center mb-4"
+                style={{
+                  fontSize: "1.8rem",
+                  fontWeight: "bold",
+                  color: "#333"
+                }}
+              >
+                Accedi al Tuo Account
+              </Card.Title>
               {error && <Alert variant="danger">{error}</Alert>}
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="formUsername">
-                  <Form.Label>Username</Form.Label>
+                  <Form.Label className="fw-bold">Username</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Inserisci username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
+                    style={{
+                      borderRadius: "10px",
+                      border: "1px solid #ccc",
+                      padding: "10px"
+                    }}
                   />
                 </Form.Group>
                 <Form.Group className="mb-4" controlId="formPassword">
-                  <Form.Label>Password</Form.Label>
+                  <Form.Label className="fw-bold">Password</Form.Label>
                   <Form.Control
                     type="password"
                     placeholder="Inserisci password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    style={{
+                      borderRadius: "10px",
+                      border: "1px solid #ccc",
+                      padding: "10px"
+                    }}
                   />
                 </Form.Group>
-                <Button variant="primary" type="submit" className="w-100">
+                <Button
+                  variant="dark"
+                  type="submit"
+                  className="w-100"
+                  style={{
+                    padding: "10px",
+                    borderRadius: "10px",
+                    fontSize: "1.2rem",
+                    fontWeight: "bold",
+                    background: "#2c2c2c",
+                    border: "none",
+                    transition: "0.3s"
+                  }}
+                  onMouseOver={(e) => (e.target.style.background = "#444")}
+                  onMouseOut={(e) => (e.target.style.background = "#2c2c2c")}
+                >
                   Accedi
                 </Button>
               </Form>

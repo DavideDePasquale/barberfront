@@ -13,6 +13,8 @@ import ModificaUtente from "./components/ModificaUtente";
 import AppuntamentiPage from "./components/AppuntamentiPage";
 import LicensePage from "./components/LicensePage";
 import OrariLiberi from "./components/OrariLiberi";
+import Presentazione from "./components/Presentazione";
+import Locazione from "./components/Locazione";
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
       <TopBar />
       <Routes>
         <Route path="/" element={<FirstPage />} />
+        <Route path="/lavori" element={<Presentazione />} />
+        <Route path="/locazione" element={<Locazione />} />
         <Route path="/register" element={<Registrazione />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/contatti" element={<LicensePage />} />{" "}

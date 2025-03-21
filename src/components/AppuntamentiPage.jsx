@@ -169,6 +169,12 @@ function AppuntamentiPage() {
     ? sortedFutureAppointments
     : sortedPastAppointments;
 
+  // Pagina attuale da mostrare
+  const currentAppointmentsOnPage = currentAppointments.slice(
+    (currentPage - 1) * appointmentsPerPage,
+    currentPage * appointmentsPerPage
+  );
+
   const totalPages = Math.ceil(
     currentAppointments.length / appointmentsPerPage
   );
@@ -244,7 +250,7 @@ function AppuntamentiPage() {
 
   const isWeekend = (date) => {
     const day = date.getDay();
-    return day === 0 || day === 1; // Domenica = 0, Lunedì = 1
+    return day !== 0 && day !== 1; // Domenica = 0, Lunedì = 1
   };
 
   const today = new Date(); // Data odierna
@@ -291,11 +297,11 @@ function AppuntamentiPage() {
         </Button>
       </div>
 
-      {currentAppointments.length === 0 ? (
+      {currentAppointmentsOnPage.length === 0 ? (
         <p className="text-center">Non hai appuntamenti.</p>
       ) : (
         <Row className="mx-2">
-          {currentAppointments.map((appointment) => (
+          {currentAppointmentsOnPage.map((appointment) => (
             <Col key={appointment.id} md={4} className="mb-4">
               <Card>
                 <Card.Body>
@@ -346,51 +352,48 @@ function AppuntamentiPage() {
                 className="form-control"
                 dateFormat="yyyy/MM/dd"
                 locale={it} // Imposta la lingua italiana
-                filterDate={(date) => !isWeekend(date)} // Blocca lunedì e domenica
-                minDate={today} // Impedisce la selezione di date precedenti a oggi
+                minDate={today}
+                filterDate={isWeekend}
               />
             </Form.Group>
-            <Form.Group controlId="formTreatment">
+
+            <Form.Group controlId="formTrattamento">
               <Form.Label>Trattamento</Form.Label>
-              <select
-                className="form-control"
+              <Form.Control
+                as="select"
                 value={selectedTrattamento}
                 onChange={(e) => setSelectedTrattamento(e.target.value)}
               >
-                <option value="">Seleziona trattamento</option>
                 {trattamenti.map((trattamento) => (
                   <option key={trattamento.id} value={trattamento.id}>
                     {trattamento.tipotrattamento}
                   </option>
                 ))}
-              </select>
+              </Form.Control>
             </Form.Group>
 
             <Form.Group controlId="formTime">
               <Form.Label>Orario</Form.Label>
-              <select
-                className="form-control"
+              <Form.Control
+                as="select"
                 value={selectedTime}
                 onChange={(e) => setSelectedTime(e.target.value)}
               >
-                <option value="">Seleziona orario</option>
-                {availableTimes.map((time) => (
-                  <option key={time} value={time}>
+                {availableTimes.map((time, index) => (
+                  <option key={index} value={time}>
                     {time}
                   </option>
                 ))}
-              </select>
+              </Form.Control>
             </Form.Group>
+
+            <div className="d-flex justify-content-center mt-4">
+              <Button variant="success" onClick={handleSaveChanges}>
+                Salva modifiche
+              </Button>
+            </div>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
-            Chiudi
-          </Button>
-          <Button variant="primary" onClick={handleSaveChanges}>
-            Salva modifiche
-          </Button>
-        </Modal.Footer>
       </Modal>
     </Container>
   );

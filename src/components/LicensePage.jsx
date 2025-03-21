@@ -4,8 +4,8 @@ import { FaGithub, FaCopyright, FaUsers } from "react-icons/fa";
 
 const LicensePage = () => {
   return (
-    <Container fluid className="bg-grey py-5" style={{ minHeight: "100vh" }}>
-      <Row className="justify-content-center mt-5">
+    <Container fluid className="bg-grey py-5">
+      <Row className="justify-content-center mt-3">
         <Col md={6}>
           <Card
             className="shadow-lg border-0 p-4"

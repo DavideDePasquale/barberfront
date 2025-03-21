@@ -7,8 +7,8 @@ function ModificaUtente() {
     email: "",
     username: "",
     avatar: "",
-    password: "",
-    role: "" // Questo campo non è modificabile
+    role: "", // Non includere la password nel form
+    password: "" // Inizialmente vuoto, non lo precompilare mai
   });
 
   const [loading, setLoading] = useState(true);
@@ -43,7 +43,14 @@ function ModificaUtente() {
       }
 
       const data = await response.json();
-      setUserData(data); // Memorizza i dati utente
+      setUserData({
+        nome: data.nome,
+        cognome: data.cognome,
+        email: data.email,
+        username: data.username,
+        avatar: data.avatar,
+        role: data.tipoRuolo // Mantieni il ruolo, ma non includere la password
+      });
       setLoading(false);
     } catch (error) {
       setError(error.message);
@@ -71,9 +78,9 @@ function ModificaUtente() {
 
     const dataToSend = { ...userData };
 
-    // Non mandare una password vuota al backend
+    // Se la password non è stata modificata (è vuota), non inviarla
     if (!dataToSend.password) {
-      delete dataToSend.password;
+      delete dataToSend.password; // Rimuovi la password se non è stata cambiata
     }
 
     try {
@@ -155,11 +162,11 @@ function ModificaUtente() {
           />
         </label>
         <label>
-          Password:
+          Password (lascia vuoto se non vuoi modificarla):
           <input
             type="password"
             name="password"
-            value={userData.password}
+            value={userData.password} // Il campo password rimane vuoto
             onChange={handleChange}
           />
         </label>

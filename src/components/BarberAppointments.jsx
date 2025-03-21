@@ -79,15 +79,13 @@ const BarberAppointments = () => {
     const dates = Object.keys(groupedAppointments).sort();
     setAppointmentDates(dates); // Salva le date nel state
 
-    // Calcola l'indice per la pagina corrente basato sulla data corrente
-    const currentDate = new Date().toISOString().split("T")[0]; // Ottieni la data corrente in formato YYYY-MM-DD
-    const currentDateIndex = dates.indexOf(currentDate);
+    if (dates.length > 0) {
+      const currentDate = new Date().toISOString().split("T")[0]; // Data di oggi in formato YYYY-MM-DD
+      const currentDateIndex = dates.indexOf(currentDate);
 
-    // Se il giorno corrente è presente, selezioniamolo come pagina predefinita
-    const defaultPageIndex = currentDateIndex !== -1 ? currentDateIndex : 0;
-
-    // Imposta la pagina iniziale su defaultPageIndex
-    setCurrentPage(defaultPageIndex);
+      // Se oggi è presente nella lista, imposta la pagina, altrimenti metti la prima disponibile
+      setCurrentPage(currentDateIndex !== -1 ? currentDateIndex : 0);
+    }
   }, [appointments]); // Ricalcola le date degli appuntamenti ogni volta che gli appuntamenti cambiano
 
   if (loading) return <p>Caricamento appuntamenti...</p>;
