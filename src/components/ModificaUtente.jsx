@@ -1,4 +1,13 @@
 import React, { useEffect, useState } from "react";
+import {
+  Button,
+  Form,
+  Alert,
+  Card,
+  Container,
+  Row,
+  Col
+} from "react-bootstrap";
 
 function ModificaUtente() {
   const [userData, setUserData] = useState({
@@ -7,41 +16,31 @@ function ModificaUtente() {
     email: "",
     username: "",
     avatar: "",
-    role: "", // Non includere la password nel form
-    password: "" // Inizialmente vuoto, non lo precompilare mai
+    role: "",
+    password: "" // Non precompilare mai
   });
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  // Funzione per ottenere l'ID utente dal token
   const getUserIdFromToken = (token) => {
-    const payload = JSON.parse(atob(token.split(".")[1])); // Decodifica il token
-    return payload?.utenteId; // Assicurati che il payload contenga 'utenteId'
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload?.utenteId;
   };
 
-  // Funzione per recuperare i dati dell'utente
   const fetchUserData = async () => {
-    const token = localStorage.getItem("token"); // Ottieni il token dal localStorage
-    const utenteId = getUserIdFromToken(token); // Estrai l'ID utente dal token
-
+    const token = localStorage.getItem("token");
+    const utenteId = getUserIdFromToken(token);
     if (!utenteId) {
       setError("ID utente non trovato nel token.");
       setLoading(false);
       return;
     }
-
     try {
       const response = await fetch(`http://localhost:8080/utente/${utenteId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        headers: { Authorization: `Bearer ${token}` }
       });
-
-      if (!response.ok) {
-        throw new Error("Errore nel recupero dei dati dell'utente");
-      }
-
+      if (!response.ok) throw new Error("Errore nel recupero dei dati");
       const data = await response.json();
       setUserData({
         nome: data.nome,
@@ -49,7 +48,7 @@ function ModificaUtente() {
         email: data.email,
         username: data.username,
         avatar: data.avatar,
-        role: data.tipoRuolo // Mantieni il ruolo, ma non includere la password
+        role: data.tipoRuolo
       });
       setLoading(false);
     } catch (error) {
@@ -62,26 +61,17 @@ function ModificaUtente() {
     fetchUserData();
   }, []);
 
-  // Gestisci il cambiamento dei dati nel modulo
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUserData((prevData) => ({
-      ...prevData,
-      [name]: value
-    }));
+    setUserData({ ...userData, [e.target.name]: e.target.value });
   };
 
-  // Gestisci il salvataggio dei dati modificati
   const handleSave = async () => {
+    setError("");
+    setSuccess("");
     const token = localStorage.getItem("token");
     const utenteId = getUserIdFromToken(token);
-
     const dataToSend = { ...userData };
-
-    // Se la password non è stata modificata (è vuota), non inviarla
-    if (!dataToSend.password) {
-      delete dataToSend.password; // Rimuovi la password se non è stata cambiata
-    }
+    if (!dataToSend.password) delete dataToSend.password;
 
     try {
       const response = await fetch(`http://localhost:8080/utente/${utenteId}`, {
@@ -94,87 +84,170 @@ function ModificaUtente() {
       });
 
       if (!response.ok) {
-        throw new Error("Errore nel salvataggio dei dati");
+        const errorMessage = await response.text();
+        throw new Error(errorMessage);
       }
 
-      const data = await response.json();
-
-      if (data.token) {
-        localStorage.setItem("token", data.token); // Aggiorna il token nel localStorage
-      }
-
-      alert("Dati salvati con successo!");
+      setSuccess("Dati salvati con successo!");
     } catch (error) {
-      alert(error.message);
+      setError(error.message);
     }
   };
 
-  if (loading) return <p>Caricamento...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <p className="text-center text-light">Caricamento...</p>;
 
   return (
-    <div>
-      <h1>Modifica il tuo profilo</h1>
-      <form>
-        <label>
-          Nome:
-          <input
-            type="text"
-            name="nome"
-            value={userData.nome}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Cognome:
-          <input
-            type="text"
-            name="cognome"
-            value={userData.cognome}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Email:
-          <input
-            type="email"
-            name="email"
-            value={userData.email}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Username:
-          <input
-            type="text"
-            name="username"
-            value={userData.username}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Avatar URL:
-          <input
-            type="text"
-            name="avatar"
-            value={userData.avatar}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Password (lascia vuoto se non vuoi modificarla):
-          <input
-            type="password"
-            name="password"
-            value={userData.password} // Il campo password rimane vuoto
-            onChange={handleChange}
-          />
-        </label>
-        <button type="button" onClick={handleSave}>
-          Salva
-        </button>
-      </form>
-    </div>
+    <Container
+      fluid
+      className="d-flex align-items-center justify-content-center"
+      style={{
+        minHeight: "85vh"
+      }}
+    >
+      <Row className="w-100">
+        <Col xs={12} md={{ span: 6, offset: 3 }}>
+          <Card
+            className="shadow-lg border-0 p-4"
+            style={{
+              borderRadius: "60px",
+              backgroundColor: "rgb(216 219 222)"
+            }}
+          >
+            <Card.Body>
+              <Card.Title
+                className="text-center mb-4"
+                style={{
+                  fontSize: "1.8rem",
+                  fontWeight: "bold",
+                  color: "#333"
+                }}
+              >
+                Modifica Profilo
+              </Card.Title>
+              {error && <Alert variant="danger">{error}</Alert>}
+              {success && <Alert variant="success">{success}</Alert>}
+              <Form>
+                <Form.Group className="mb-3" controlId="nome">
+                  <Form.Label className="fw-bold">Nome</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="nome"
+                    value={userData.nome}
+                    onChange={handleChange}
+                    required
+                    style={{
+                      borderRadius: "10px",
+                      border: "1px solid #ccc",
+                      padding: "10px"
+                    }}
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3" controlId="cognome">
+                  <Form.Label className="fw-bold">Cognome</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="cognome"
+                    value={userData.cognome}
+                    onChange={handleChange}
+                    required
+                    style={{
+                      borderRadius: "10px",
+                      border: "1px solid #ccc",
+                      padding: "10px"
+                    }}
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3" controlId="email">
+                  <Form.Label className="fw-bold">Email</Form.Label>
+                  <Form.Control
+                    type="email"
+                    name="email"
+                    value={userData.email}
+                    onChange={handleChange}
+                    required
+                    style={{
+                      borderRadius: "10px",
+                      border: "1px solid #ccc",
+                      padding: "10px"
+                    }}
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3" controlId="username">
+                  <Form.Label className="fw-bold">Username</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="username"
+                    value={userData.username}
+                    onChange={handleChange}
+                    required
+                    style={{
+                      borderRadius: "10px",
+                      border: "1px solid #ccc",
+                      padding: "10px"
+                    }}
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3" controlId="avatar">
+                  <Form.Label className="fw-bold">Avatar URL</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="avatar"
+                    value={userData.avatar}
+                    onChange={handleChange}
+                    style={{
+                      borderRadius: "10px",
+                      border: "1px solid #ccc",
+                      padding: "10px"
+                    }}
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-4" controlId="password">
+                  <Form.Label className="fw-bold">
+                    Password (opzionale)
+                  </Form.Label>
+                  <Form.Control
+                    type="password"
+                    name="password"
+                    value={userData.password}
+                    onChange={handleChange}
+                    style={{
+                      borderRadius: "10px",
+                      border: "1px solid #ccc",
+                      padding: "10px"
+                    }}
+                  />
+                </Form.Group>
+
+                <Button
+                  variant="dark"
+                  type="button"
+                  onClick={handleSave}
+                  className="w-100"
+                  style={{
+                    padding: "12px",
+                    borderRadius: "10px",
+                    fontSize: "1.2rem",
+                    fontWeight: "bold",
+                    background: "#2c2c2c",
+                    border: "none",
+                    transition: "0.3s"
+                  }}
+                  onMouseOver={(e) => (e.target.style.background = "#444")}
+                  onMouseOut={(e) => (e.target.style.background = "#2c2c2c")}
+                >
+                  Salva Modifiche
+                </Button>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 
