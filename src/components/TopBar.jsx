@@ -118,14 +118,14 @@ function TopBar() {
               <>
                 <NavLink
                   to="/appuntamento/barber/appuntamenti"
-                  className={`nav-link fw-semibold ${
+                  className={`nav-link fw-semibold  ${
                     location.pathname.includes(
                       "/appuntamento/barber/appuntamenti"
                     )
                       ? "text-dark fw-bold"
                       : "text-secondary"
                   }`}
-                  style={{ fontSize: "14px" }} // Font più piccolo
+                  style={{ fontSize: "13px" }} // Font più piccolo
                 >
                   Prenotazioni
                 </NavLink>
@@ -136,7 +136,7 @@ function TopBar() {
                       ? "text-dark fw-bold"
                       : "text-secondary"
                   }`}
-                  style={{ fontSize: "14px" }} // Font più piccolo
+                  style={{ fontSize: "13px" }} // Font più piccolo
                 >
                   Posti Liberi
                 </NavLink>
