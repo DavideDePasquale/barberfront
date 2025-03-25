@@ -58,3 +58,6 @@
 .table td {
   flex: 1; /* Ogni colonna occupa la stessa larghezza */
 }
+.specialColorButton:hover {
+  background-color: red;
+}

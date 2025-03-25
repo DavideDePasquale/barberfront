@@ -66,7 +66,7 @@
 }
 
 .appointments-page .btn:hover {
-  background-color: #0056b3;
+  background-color: #3f434d;
   color: white;
 }
 
@@ -102,4 +102,10 @@
 .small-button {
   font-size: 0.8rem; /* riduco dimensione del testo */
   padding: 0.5rem 1rem; /* riduco padding */
+}
+.specialColorButton.btn:hover {
+  background-color: rgb(128, 8, 8);
+}
+.specialColorButton2.btn:hover {
+  background-color: #343535;
 }

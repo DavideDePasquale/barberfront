@@ -14,6 +14,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { it } from "date-fns/locale"; // Importa la lingua italiana da date-fns
 import "./AppuntamentiPage.css";
+import { Trash2Fill, Trash3Fill, TrashFill } from "react-bootstrap-icons";
 
 function AppuntamentiPage() {
   const [loading, setLoading] = useState(true);
@@ -88,8 +89,25 @@ function AppuntamentiPage() {
         throw new Error(`Errore HTTP: ${response.status}`);
       }
 
-      const data = await response.json();
+      let data = await response.json();
       console.log("Orari disponibili:", data);
+
+      // Se la data selezionata è oggi, filtriamo gli orari successivi all'ora attuale
+      const now = new Date();
+      if (formattedDate === now.toISOString().split("T")[0]) {
+        const currentHour = now.getHours();
+        const currentMinutes = now.getMinutes();
+
+        data = data.filter((time) => {
+          const [hour, minutes] = time.split(":").map(Number);
+          return (
+            hour > currentHour ||
+            (hour === currentHour && minutes > currentMinutes)
+          );
+        });
+
+        console.log("Orari disponibili dopo l'ora attuale:", data);
+      }
 
       setAvailableTimes(data);
     } catch (error) {
@@ -146,6 +164,36 @@ function AppuntamentiPage() {
     setSelectedDate(new Date(appointment.data));
     setShowModal(true);
     fetchAvailableTimes(appointment.data);
+  };
+
+  const handleDeleteAppointment = async (appointmentId) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Token non trovato");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/appuntamento/${appointmentId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error("Errore nella cancellazione dell'appuntamento");
+      }
+
+      setSuccessMessage("L'appuntamento è stato eliminato con successo!");
+      fetchAppointments();
+      setTimeout(() => setSuccessMessage(""), 5000);
+    } catch (error) {
+      setError(
+        error.message || "Errore durante l'eliminazione dell'appuntamento"
+      );
+    }
   };
 
   useEffect(() => {
@@ -271,7 +319,7 @@ function AppuntamentiPage() {
   }
 
   return (
-    <Container className="appointments-page my-5">
+    <Container className="appointments-page my-5 px-1">
       <h1 className="text-center mb-4">Promemoria Appuntamenti</h1>
 
       {successMessage && (
@@ -297,67 +345,75 @@ function AppuntamentiPage() {
         </Button>
       </div>
 
-      {currentAppointmentsOnPage.length === 0 ? (
-        <p className="text-center">Non hai appuntamenti.</p>
-      ) : (
-        <Row className="mx-2">
-          {currentAppointmentsOnPage.map((appointment) => (
-            <Col key={appointment.id} md={4} className="mb-4">
-              <Card>
-                <Card.Body>
-                  <Card.Title>
-                    Trattamento :<br />{" "}
-                    {appointment.trattamento.tipotrattamento}
-                  </Card.Title>
-                  <Card.Text>
-                    <strong>Data:</strong> {appointment.data}
-                    <br />
-                    <strong>Orario:</strong> {appointment.oraappuntamento}
-                  </Card.Text>
-                  {/* Condizione per mostrare il tasto "Modifica" solo per appuntamenti futuri */}
-                  {!isAppointmentPassed(appointment) && (
-                    <Button
-                      variant="primary"
-                      onClick={() => handleEditAppointment(appointment)}
-                    >
-                      Modifica
-                    </Button>
-                  )}
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      )}
+      <Row>
+        {currentAppointmentsOnPage.map((appointment) => (
+          <Col key={appointment.id} md={4} className="mb-4">
+            <Card>
+              <Card.Body>
+                <Card.Title>
+                  Trattamento :<br /> {appointment.trattamento.tipotrattamento}
+                </Card.Title>
+                <Card.Text>
+                  <strong>Giorno:</strong> {appointment.data}
+                  <br />
+                  <strong>Orario:</strong> {appointment.oraappuntamento}
+                </Card.Text>
+                {!isAppointmentPassed(appointment) && (
+                  <Button
+                    variant="secondary"
+                    className="specialColorButton2"
+                    onClick={() => handleEditAppointment(appointment)}
+                  >
+                    Modifica
+                  </Button>
+                )}
+                {!isAppointmentPassed(appointment) && (
+                  <Button
+                    variant="outline-secondary"
+                    className="mt-2 specialColorButton"
+                    onClick={() => handleDeleteAppointment(appointment.id)}
+                  >
+                    <Trash3Fill />
+                  </Button>
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
+      </Row>
 
-      <div className="d-flex justify-content-center">
-        <Pagination>
+      {totalPages > 1 && (
+        <Pagination className="justify-content-center mt-4">
           <Pagination.Prev onClick={prevPage} />
           <Pagination.Item>{currentPage}</Pagination.Item>
           <Pagination.Next onClick={nextPage} />
         </Pagination>
-      </div>
+      )}
 
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Modifica Appuntamento</Modal.Title>
+          <Modal.Title>Modifica appuntamento</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
             <Form.Group controlId="formDate">
-              <Form.Label>Data</Form.Label>
+              <Form.Label>Giorno</Form.Label> <br />
               <DatePicker
                 selected={selectedDate}
                 onChange={(date) => setSelectedDate(date)}
-                className="form-control"
-                dateFormat="yyyy/MM/dd"
-                locale={it} // Imposta la lingua italiana
                 minDate={today}
-                filterDate={isWeekend}
+                showPopperArrow={false}
+                dateFormat="yyyy-MM-dd"
+                locale={it}
+                className="form-control"
+                filterDate={isWeekend} // Filtra i fine settimana
               />
             </Form.Group>
 
-            <Form.Group controlId="formTrattamento">
+            <Form.Group
+              controlId="formTrattamento"
+              style={{ marginTop: "10px" }}
+            >
               <Form.Label>Trattamento</Form.Label>
               <Form.Control
                 as="select"
@@ -371,29 +427,36 @@ function AppuntamentiPage() {
                 ))}
               </Form.Control>
             </Form.Group>
-
-            <Form.Group controlId="formTime">
+            <Form.Group controlId="formTime" style={{ marginTop: "10px" }}>
               <Form.Label>Orario</Form.Label>
-              <Form.Control
-                as="select"
-                value={selectedTime}
-                onChange={(e) => setSelectedTime(e.target.value)}
-              >
-                {availableTimes.map((time, index) => (
-                  <option key={index} value={time}>
-                    {time}
-                  </option>
-                ))}
-              </Form.Control>
+              {availableTimes.length > 0 ? (
+                <Form.Control
+                  as="select"
+                  value={selectedTime}
+                  onChange={(e) => setSelectedTime(e.target.value)}
+                >
+                  {availableTimes.map((time) => (
+                    <option key={time} value={time}>
+                      {time}
+                    </option>
+                  ))}
+                </Form.Control>
+              ) : (
+                <p className="text-danger">
+                  Nessun orario disponibile per questa data.
+                </p>
+              )}
             </Form.Group>
-
-            <div className="d-flex justify-content-center mt-4">
-              <Button variant="success" onClick={handleSaveChanges}>
-                Salva modifiche
-              </Button>
-            </div>
           </Form>
         </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Annulla
+          </Button>
+          <Button variant="outline-dark" onClick={handleSaveChanges}>
+            Salva modifiche
+          </Button>
+        </Modal.Footer>
       </Modal>
     </Container>
   );
