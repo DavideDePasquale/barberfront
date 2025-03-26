@@ -51,3 +51,7 @@ Il barbiere, invece, può gestire gli appuntamenti ricevuti, consultare gli orar
 ## Contatti
 
 Se hai domande o desideri contribuire al progetto, puoi contattarmi a [davide.depasquale1998@gmail.com](mailto:davide.depasquale1998@gmail.com).
+
+## PARTE BACK-END :
+
+https://github.com/DavideDePasquale/barber.git
