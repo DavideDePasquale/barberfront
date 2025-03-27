@@ -1,26 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ReactPaginate from "react-paginate";
-import "./BarberAppointments.css"; // Importiamo il file CSS per gli stili personalizzati
+import "../style/BarberAppointments.css";
 
 const BarberAppointments = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(0); // Stato per la pagina corrente
-  const [appointmentDates, setAppointmentDates] = useState([]); // Stato per le date degli appuntamenti
+  const [currentPage, setCurrentPage] = useState(0);
+  const [appointmentDates, setAppointmentDates] = useState([]);
   const navigate = useNavigate();
 
-  const today = new Date(); // Data di oggi
-  const endDate = new Date(today);
-  endDate.setDate(today.getDate() + 8); // Definisci il giorno finale (oggi + 7 giorni, ad esempio)
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Normalizza l'orario per confronti precisi
+
+  // Calcola la data massima (tra 8 giorni)
+  const maxDate = new Date();
+  maxDate.setDate(today.getDate() + 6);
 
   useEffect(() => {
     const fetchAppointments = async () => {
-      const token = localStorage.getItem("token"); // Ottieni il token dal localStorage
+      const token = localStorage.getItem("token");
 
       if (!token) {
-        navigate("/login"); // Se non c'è il token, reindirizza al login
+        navigate("/login");
         return;
       }
 
@@ -30,7 +33,7 @@ const BarberAppointments = () => {
           {
             method: "GET",
             headers: {
-              Authorization: `Bearer ${token}` // Aggiungi il token nell'header
+              Authorization: `Bearer ${token}`
             }
           }
         );
@@ -38,20 +41,21 @@ const BarberAppointments = () => {
         if (response.ok) {
           const data = await response.json();
 
-          // Ordina gli appuntamenti per data e orario (dalla più piccola alla più grande)
-          const sortedAppointments = data
-            .filter((appointment) => {
-              const appointmentDate = new Date(appointment.data);
-              return appointmentDate >= today && appointmentDate <= endDate;
-            })
-            .sort((a, b) => {
-              // Crea un oggetto Date combinando la data e l'orario
-              const dateA = new Date(`${a.data}T${a.oraappuntamento}`);
-              const dateB = new Date(`${b.data}T${b.oraappuntamento}`);
-              return dateA - dateB; // Ordina in ordine crescente
-            });
+          // Filtra gli appuntamenti per i prossimi 8 giorni
+          const filteredAppointments = data.filter((appointment) => {
+            const appointmentDate = new Date(appointment.data);
+            return appointmentDate >= today && appointmentDate <= maxDate;
+          });
 
-          setAppointments(sortedAppointments); // Setta direttamente gli appuntamenti con i dati ordinati
+          // Ordina prima per data, poi per orario
+          const sortedAppointments = filteredAppointments.sort((a, b) => {
+            const dateA = new Date(a.data);
+            const dateB = new Date(b.data);
+            if (dateA - dateB !== 0) return dateA - dateB; // Ordina per data
+            return a.oraappuntamento.localeCompare(b.oraappuntamento); // Ordina per orario
+          });
+
+          setAppointments(sortedAppointments);
         } else {
           setError("Errore nel recupero degli appuntamenti");
         }
@@ -67,42 +71,33 @@ const BarberAppointments = () => {
   }, [navigate]);
 
   useEffect(() => {
-    // Raggruppa gli appuntamenti per data
-    const groupedAppointments = appointments.reduce((acc, appointment) => {
-      const dateKey = appointment.data; // Usa la data come chiave
-      if (!acc[dateKey]) acc[dateKey] = [];
-      acc[dateKey].push(appointment);
-      return acc;
-    }, {});
+    // Raggruppa gli appuntamenti per data (max 7 giorni)
+    const groupedAppointments = appointments
+      .reduce((acc, appointment) => {
+        const dateKey = appointment.data;
+        if (!acc.includes(dateKey)) acc.push(dateKey);
+        return acc;
+      }, [])
+      .slice(0, 7); // Prende solo i primi 7 giorni
 
-    // Ottieni una lista di date uniche (giorni)
-    const dates = Object.keys(groupedAppointments).sort();
-    setAppointmentDates(dates); // Salva le date nel state
+    setAppointmentDates(groupedAppointments);
 
-    if (dates.length > 0) {
-      const currentDate = new Date().toISOString().split("T")[0]; // Data di oggi in formato YYYY-MM-DD
-      const currentDateIndex = dates.indexOf(currentDate);
-
-      // Se oggi è presente nella lista, imposta la pagina, altrimenti metti la prima disponibile
+    if (groupedAppointments.length > 0) {
+      const currentDateIndex = groupedAppointments.indexOf(
+        today.toISOString().split("T")[0]
+      );
       setCurrentPage(currentDateIndex !== -1 ? currentDateIndex : 0);
     }
-  }, [appointments]); // Ricalcola le date degli appuntamenti ogni volta che gli appuntamenti cambiano
+  }, [appointments]);
 
   if (loading) return <p>Caricamento appuntamenti...</p>;
-
   if (error) return <p>{error}</p>;
 
-  // Ottieni gli appuntamenti per il giorno selezionato
-  const currentDayAppointments = appointments.filter((appointment) => {
-    const appointmentDate = new Date(appointment.data);
-    return (
-      appointmentDate >= today &&
-      appointmentDate <= endDate &&
-      appointment.data === appointmentDates[currentPage]
-    );
-  });
+  // Appuntamenti della data corrente selezionata
+  const currentDayAppointments = appointments.filter(
+    (appointment) => appointment.data === appointmentDates[currentPage]
+  );
 
-  // Funzione per gestire il cambiamento di pagina
   const handlePageChange = (selectedPage) => {
     setCurrentPage(selectedPage.selected);
   };
@@ -111,9 +106,8 @@ const BarberAppointments = () => {
     <div className="container mt-5">
       <h2 className="heading">APPUNTAMENTI📍</h2>
 
-      {/* Visualizza gli appuntamenti del giorno corrente */}
       <div>
-        <h3> 📅GIORNO : {appointmentDates[currentPage]} 📅</h3>
+        <h3> 📅 GIORNO: {appointmentDates[currentPage]} 📅</h3>
         <table className="table table-striped table-bordered">
           <thead>
             <tr>
@@ -142,12 +136,11 @@ const BarberAppointments = () => {
         </table>
       </div>
 
-      {/* Paginazione per le date */}
       <ReactPaginate
         previousLabel={"← Precedente"}
         nextLabel={"Successiva →"}
-        pageCount={appointmentDates.length} // Numero totale di giorni
-        onPageChange={handlePageChange} // Gestisce il cambiamento di pagina
+        pageCount={appointmentDates.length}
+        onPageChange={handlePageChange}
         containerClassName={"pagination"}
         activeClassName={"active"}
         pageClassName={"page-item"}

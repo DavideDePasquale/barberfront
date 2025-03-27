@@ -71,7 +71,7 @@ function TopBar() {
                   ? "text-dark fw-bold"
                   : "text-secondary"
               }`}
-              style={{ fontSize: "14px" }} // Font più piccolo
+              style={{ fontSize: "14px" }}
             >
               Home
             </NavLink>
@@ -82,7 +82,7 @@ function TopBar() {
                   ? "text-dark fw-bold"
                   : "text-secondary"
               }`}
-              style={{ fontSize: "14px" }} // Font più piccolo
+              style={{ fontSize: "14px" }}
             >
               Lavori
             </NavLink>
@@ -96,7 +96,7 @@ function TopBar() {
                       ? "text-dark fw-bold"
                       : "text-secondary"
                   }`}
-                  style={{ fontSize: "14px" }} // Font più piccolo
+                  style={{ fontSize: "14px" }}
                 >
                   Prenota
                 </NavLink>
@@ -107,7 +107,7 @@ function TopBar() {
                       ? "text-dark fw-bold"
                       : "text-secondary"
                   }`}
-                  style={{ fontSize: "14px" }} // Font più piccolo
+                  style={{ fontSize: "14px" }}
                 >
                   Promemoria
                 </NavLink>
@@ -125,7 +125,7 @@ function TopBar() {
                       ? "text-dark fw-bold"
                       : "text-secondary"
                   }`}
-                  style={{ fontSize: "13px" }} // Font più piccolo
+                  style={{ fontSize: "13px" }}
                 >
                   Prenotazioni
                 </NavLink>
@@ -136,7 +136,7 @@ function TopBar() {
                       ? "text-dark fw-bold"
                       : "text-secondary"
                   }`}
-                  style={{ fontSize: "13px" }} // Font più piccolo
+                  style={{ fontSize: "13px" }}
                 >
                   Posti Liberi
                 </NavLink>
@@ -152,12 +152,11 @@ function TopBar() {
                   ? "text-dark fw-bold"
                   : "text-secondary"
               }`}
-              style={{ fontSize: "14px" }} // Font più piccolo
+              style={{ fontSize: "14px" }}
             >
               Licenze
             </NavLink>
 
-            {/* Nuovo link a "Locazione" */}
             <NavLink
               to="/locazione"
               className={`nav-link fw-semibold me-3 ${
@@ -165,7 +164,7 @@ function TopBar() {
                   ? "text-dark fw-bold"
                   : "text-secondary"
               }`}
-              style={{ fontSize: "14px" }} // Font più piccolo
+              style={{ fontSize: "14px" }}
             >
               Dove Siamo
             </NavLink>

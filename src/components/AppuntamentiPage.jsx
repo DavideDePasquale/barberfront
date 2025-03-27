@@ -13,7 +13,7 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { it } from "date-fns/locale"; // Importa la lingua italiana da date-fns
-import "./AppuntamentiPage.css";
+import "../style/AppuntamentiPage.css";
 import { Trash2Fill, Trash3Fill, TrashFill } from "react-bootstrap-icons";
 
 function AppuntamentiPage() {

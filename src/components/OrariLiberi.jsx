@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css"; // Importa lo stile per il calendario
+import "react-datepicker/dist/react-datepicker.css"; // Importo lo stile per il calendario
 import { Button, Card, Spinner, Alert } from "react-bootstrap";
-import { it } from "date-fns/locale"; // Importa la lingua italiana
-import "./OrariLiberi.css"; // Assicurati che ci sia il file CSS
+import { it } from "date-fns/locale"; // Importo la lingua italiana
+import "../style/OrariLiberi.css"; // css adibito
 
 function OrariLiberi() {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -33,8 +33,12 @@ function OrariLiberi() {
         return;
       }
 
-      // Formatta la data in formato yyyy-MM-dd
-      const formattedDate = date.toISOString().split("T")[0];
+      // Correzione per evitare il problema del fuso orario!!!!!!!
+      const correctedDate = new Date(date);
+      correctedDate.setMinutes(date.getMinutes() - date.getTimezoneOffset()); // Normalizza il fuso orario
+
+      // Formatta la data in formato yyyy-MM-dd (senza influenze del fuso orario)!!!!
+      const formattedDate = correctedDate.toISOString().split("T")[0];
 
       // Chiamata API per ottenere gli orari liberi
       const response = await fetch(
@@ -52,7 +56,7 @@ function OrariLiberi() {
         throw new Error("Errore nel recupero degli orari");
       }
 
-      // Recupera i dati dalla risposta in formato JSON
+      // Recupero i dati dalla risposta in formato JSON
       const data = await response.json();
 
       // Aggiorna lo stato con gli orari liberi
@@ -84,8 +88,8 @@ function OrariLiberi() {
           dateFormat="yyyy-MM-dd"
           placeholderText="Seleziona una data"
           className="form-control calendar"
-          minDate={new Date()} // Non permette di selezionare date nel passato
-          filterDate={(date) => !isWeekend(date)} // Disabilita domenica e lunedì
+          minDate={new Date()} // Non permetto di selezionare date nel passato
+          filterDate={(date) => !isWeekend(date)} // Disabilito domenica e lunedì
           locale={it} // Imposta la lingua italiana
         />
       </div>

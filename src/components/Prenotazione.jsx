@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import "./Prenotazione.css"; // File CSS personalizzato
+import "../style/Prenotazione.css";
 
 const Prenotazione = () => {
   const [username, setUsername] = useState("");
@@ -115,8 +115,8 @@ const Prenotazione = () => {
         const currentHour = today.getHours();
         setOrariDisponibili(
           data.filter((orario) => {
-            const hour = parseInt(orario.split(":")[0], 10); // Estrai l'ora
-            return hour >= currentHour; // Mantieni solo gli orari futuri
+            const hour = parseInt(orario.split(":")[0], 10); // Estraggo l'ora
+            return hour >= currentHour; // Mantengo solo gli orari futuri
           })
         );
       } else {
@@ -124,18 +124,18 @@ const Prenotazione = () => {
       }
     } catch (error) {
       console.error("Errore nel recupero degli orari disponibili", error);
-      setOrariDisponibili([]); // Reset in caso di errore
+      setOrariDisponibili([]); // Resetto in caso di errore
     }
   };
 
   const handleDateChange = (date) => {
     const normalizedDate = new Date(date);
-    normalizedDate.setHours(0, 0, 0, 0); // Imposta a mezzanotte
+    normalizedDate.setHours(0, 0, 0, 0); // Impostato a mezzanotte
 
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Imposta la data di oggi a mezzanotte
+    today.setHours(0, 0, 0, 0); // Impostata la data di oggi a mezzanotte
 
-    // Non permettere la selezione di date nel passato
+    // Non permetto la selezione di date nel passato
     if (normalizedDate < today) {
       alert("Non puoi selezionare una data nel passato!");
       return;
@@ -219,7 +219,7 @@ const Prenotazione = () => {
         <Calendar
           onChange={handleDateChange}
           value={selectedDate}
-          tileDisabled={tileDisabled} // Aggiungi la logica per disabilitare domenica e lunedì
+          tileDisabled={tileDisabled} // Aggiunta della logica per disabilitare domenica e lunedì
         />
       </div>
 
