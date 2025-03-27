@@ -14,7 +14,7 @@ const BarberAppointments = () => {
   const today = new Date();
   today.setHours(0, 0, 0, 0); // Normalizza l'orario per confronti precisi
 
-  // Calcola la data massima (tra 8 giorni)
+  // Calcola la data massima (tra 7 giorni)
   const maxDate = new Date();
   maxDate.setDate(today.getDate() + 6);
 
@@ -41,7 +41,7 @@ const BarberAppointments = () => {
         if (response.ok) {
           const data = await response.json();
 
-          // Filtra gli appuntamenti per i prossimi 8 giorni
+          // Filtra gli appuntamenti per i prossimi 7 giorni
           const filteredAppointments = data.filter((appointment) => {
             const appointmentDate = new Date(appointment.data);
             return appointmentDate >= today && appointmentDate <= maxDate;
