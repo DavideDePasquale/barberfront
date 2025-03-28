@@ -103,7 +103,7 @@ const BarberAppointments = () => {
   };
 
   return (
-    <div className="container mt-5">
+    <div className="container2 mt-2">
       <h2 className="heading">APPUNTAMENTI📍</h2>
 
       <div>
@@ -125,7 +125,7 @@ const BarberAppointments = () => {
               </tr>
             ) : (
               currentDayAppointments.map((appointment) => (
-                <tr key={appointment.id}>
+                <tr style={{ fontSize: "13px" }} key={appointment.id}>
                   <td>{appointment.utenteNome}</td>
                   <td>{appointment.oraappuntamento}</td>
                   <td>{appointment.trattamentoNome}</td>

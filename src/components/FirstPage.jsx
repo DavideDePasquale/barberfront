@@ -21,14 +21,22 @@ function FirstPage() {
       }}
     >
       <Row className="align-items-center">
-        <Col md={5} className="d-flex flex-column justify-content-center mb-2">
+        <Col md={5} className="d-flex flex-column  mb-2">
           <h2
-            className="mb-1"
+            className="mb-1 specialMargin"
             style={{ fontSize: "3.4rem", fontWeight: "bold", color: "#333" }}
           >
             Next Studio <br />{" "}
           </h2>
-          <h3 style={{ fontSize: "1.6rem", fontWeight: "bold", color: "#333" }}>
+          <h3
+            style={{
+              textAlign: "left",
+              marginBottom: "2rem",
+              fontSize: "1.6rem",
+              fontWeight: "bold",
+              color: "#333"
+            }}
+          >
             Dove Stile e Personalità si Incontrano
           </h3>
           <p style={{ textAlign: "left" }}>

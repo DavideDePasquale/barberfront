@@ -209,7 +209,7 @@ const Prenotazione = () => {
   };
 
   return (
-    <div className="container">
+    <div className="container2">
       <h2>
         {getSaluto()}, {username}!
       </h2>

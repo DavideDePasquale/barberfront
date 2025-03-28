@@ -41,9 +41,15 @@ function TopBar() {
     <Navbar
       expand="xl"
       className="shadow-sm py-2"
-      style={{ backgroundColor: "#93979a00" }}
+      style={{
+        backgroundColor: "#343a40",
+        position: "sticky",
+        top: "0",
+        opacity: "100%",
+        zIndex: "99"
+      }}
     >
-      <Container>
+      <Container className="backgroundSpecial">
         <NavLink
           to="/"
           className="nav-link text-dark fw-bold d-flex align-items-center"

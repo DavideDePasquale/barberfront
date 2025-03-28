@@ -208,7 +208,11 @@ function ModificaUtente() {
 
                 <Form.Group className="mb-4" controlId="password">
                   <Form.Label className="fw-bold">
-                    Password (opzionale)
+                    Password{" "}
+                    <cite className="fw-light">
+                      {" "}
+                      (lascia vuoto il campo se non vuoi cambarla!){" "}
+                    </cite>
                   </Form.Label>
                   <Form.Control
                     type="password"
