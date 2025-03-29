@@ -43,10 +43,10 @@ Il barbiere, invece, può gestire gli appuntamenti ricevuti, consultare gli orar
 
 ### **Prenotazioni**
 
-- `GET /appointments` → Recupera gli appuntamenti dell'utente loggato
-- `POST /appointments` → Prenota un nuovo appuntamento
-- `PUT /appointments/{id}` → Modifica un appuntamento esistente
-- `DELETE /appointments/{id}` → Cancella un appuntamento
+- `GET /appuntamento` → Recupera gli appuntamenti dell'utente loggato
+- `POST /appuntamento/nuovoappuntamento` → Prenota un nuovo appuntamento
+- `PUT /appuntamento/{id}` → Modifica un appuntamento esistente
+- `DELETE /appuntamento/{id}` → Cancella un appuntamento
 
 ## Contatti
 
